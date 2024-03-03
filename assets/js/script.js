@@ -123,6 +123,69 @@ async function displayMovieDetails() {
     document.querySelector('#movie-details').appendChild(div);
 }
 
+// Display Show Details
+async function displayShowDetails() {
+    const showID = window.location.search.split('=')[1];
+
+    const show = await fetchAPIData(`tv/${showID}`);
+
+    console.log(show);
+
+    displayBackgorundImage('tv', show.backdrop_path);
+
+    const div = document.createElement('div');
+
+    div.innerHTML = `<div class="details-top">
+    <div>
+    ${show.poster_path ? `<img
+    src="https://image.tmdb.org/t/p/w500${show.poster_path}"
+    class="card-img-top"
+    alt="${show.name}"
+  />` : `<img
+  src="assets/images/no-image.jpg"
+  class="card-img-top"
+  alt="${show.name}"
+/>`
+        }
+    </div>
+    <div>
+      <h2>${show.name}</h2>
+      <p>
+        <i class="fas fa-star text-primary"></i>
+        ${show.vote_average.toFixed(1)} / 10
+      </p>
+      <p class="text-muted">Last Air Data: ${show.last_air_date}</p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores
+        atque molestiae error debitis provident dolore hic odit, impedit
+        sint, voluptatum consectetur assumenda expedita perferendis
+        obcaecati veritatis voluptatibus. Voluptatum repellat suscipit,
+        quae molestiae cupiditate modi libero dolorem commodi obcaecati!
+        Ratione quia corporis recusandae delectus perspiciatis consequatur
+        ipsam. Cumque omnis ad recusandae.
+      </p>
+      <h5>Genres</h5>
+      <ul class="list-group">
+        ${show.genres.map(genre => `<li>${genre.name}</li>`).join('')}
+      </ul>
+      <a href="#" target="_blank" class="btn">Visit Show Homepage</a>
+    </div>
+  </div>
+  <div class="details-bottom">
+    <h2>Show Info</h2>
+    <ul>
+      <li><span class="text-secondary">Number of Episodes:</span> ${show.number_of_episodes}</li>
+      <li><span class="text-secondary">Number of Seasons:</span> ${show.seasons.length}</li>
+      <li><span class="text-secondary">Last Episode To Air:</span> ${show.last_episode_to_air.name}</li>
+      <li><span class="text-secondary">Status:</span> ${show.status}</li>
+    </ul>
+    <h4>Production Companies</h4>
+    <div class="list-group">${show.production_companies.map(company => `<span>${company.name}</span>`).join(', ')}</div>
+  </div>`;
+
+    document.querySelector('#show-details').appendChild(div);
+}
+
 function displayBackgorundImage(type, backgroundPath) {
     const overlayDiv = document.createElement('div');
     overlayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${backgroundPath})`;
@@ -151,7 +214,7 @@ async function fetchAPIData(endpoint) {
 
     showSpinner();
 
-    const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=pt-PT`);
+    const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
 
     const data = await response.json();
 
@@ -196,7 +259,7 @@ function init() {
             displayMovieDetails();
             break;
         case '/tv-details.html':
-            console.log('tv details');
+            displayShowDetails();
             break;
         case '/search.html':
             console.log('search');
